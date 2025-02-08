@@ -56,7 +56,6 @@ cleanup() {
     systemctl stop gost 2>/dev/null || true
 }
 
-# Check system requirements
 check_requirements() {
     log "Checking system requirements..."
     
@@ -64,24 +63,26 @@ check_requirements() {
     if [[ $EUID -ne 0 ]]; then
         log "${RED}This script must be run as root${NC}"
         exit 1
-    }
+    fi
     
     # Check OS
-    if ! grep -qi "ubuntu\|debian" /etc/os-release; then
+    if ! grep -Ei "ubuntu|debian" /etc/os-release; then
         log "${RED}This script requires Ubuntu or Debian${NC}"
         exit 1
-    }
+    fi
     
     # Check kernel version
-    local kernel_version=$(uname -r | cut -d. -f1)
-    if [[ $kernel_version -lt 5 ]]; then
+    local kernel_version
+    kernel_version=$(uname -r | cut -d. -f1 | grep -Eo '^[0-9]+$')
+    if [[ -z "$kernel_version" || $kernel_version -lt 5 ]]; then
         log "${RED}Kernel 5.x or higher is required${NC}"
         exit 1
-    }
+    fi
     
     # Create necessary directories
     mkdir -p "$LOG_DIR" "$BACKUP_DIR" "$CLIENT_DIR"
 }
+
 
 # Install dependencies
 install_dependencies() {
