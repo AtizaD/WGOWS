@@ -93,8 +93,8 @@ uninstall() {
     
     # Remove firewall rules
     log_msg "Removing firewall rules..."
-    ufw delete allow $WG_PORT/udp 2>/dev/null || true
-    ufw delete allow $WS_PORT/tcp 2>/dev/null || true
+    ufw delete allow $WG_PORT/udp >/dev/null 2>&1
+    ufw delete allow $WS_PORT/tcp >/dev/null 2>&1
     
     # Get default interface
     DEFAULT_INTERFACE=$(ip route get 8.8.8.8 | awk '{print $5; exit}')
@@ -113,7 +113,7 @@ uninstall() {
     # Disable IP forwarding
     log_msg "Resetting IP forwarding..."
     sed -i '/net.ipv4.ip_forward=1/d' /etc/sysctl.conf
-    sysctl -p
+    sysctl -p >/dev/null 2>&1  # Suppress output
     
     # Reload systemd
     systemctl daemon-reload
