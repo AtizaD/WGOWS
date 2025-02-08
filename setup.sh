@@ -141,13 +141,24 @@ install() {
     log_msg "🔹 Installing WireGuard and dependencies..."
     apt update && apt install -y wireguard qrencode wget curl ufw | tee -a $LOG_FILE
 
+
+
     log_msg "🔹 Installing gost WebSocket tunnel..."
-    GOST_VERSION="3.0.0"
-    wget -O gost.tar.gz "https://github.com/go-gost/gost/releases/download/v${GOST_VERSION}/gost-linux-amd64-${GOST_VERSION}.tar.gz"
-    tar -xzf gost.tar.gz gost
-    mv gost /usr/local/bin/gost
+    GOST_VERSION=$(curl -s https://api.github.com/repos/go-gost/gost/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)
+    
+    # Get the correct download URL
+    GOST_URL=$(curl -s https://api.github.com/repos/go-gost/gost/releases/latest | grep "browser_download_url" | grep "linux-amd64" | cut -d '"' -f 4)
+    
+    if [[ -z "$GOST_URL" ]]; then
+        log_msg "❌ Failed to find a valid download link for GOST" "$RED"
+        exit 1
+    fi
+    
+    # Download and install
+    wget -O /usr/local/bin/gost "$GOST_URL"
     chmod +x /usr/local/bin/gost
-    rm gost.tar.gz
+    log_msg "✅ GOST $GOST_VERSION installed successfully!" "$GREEN"
+
     
     log_msg "🔹 Generating WireGuard keys..."
     mkdir -p $WG_DIR && cd $WG_DIR
