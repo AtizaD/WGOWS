@@ -3,7 +3,6 @@
 # Supports Ubuntu/Debian with comprehensive error handling
 
 set -euo pipefail
-trap 'error_handler $? $LINENO $BASH_LINENO "$BASH_COMMAND" $(printf "::%s" ${FUNCNAME[@]:-})' ERR
 
 # Color codes for output
 readonly RED='\033[0;31m'
