@@ -143,21 +143,13 @@ install() {
 
 
 
-    log_msg "🔹 Installing gost WebSocket tunnel..."
-    GOST_VERSION=$(curl -s https://api.github.com/repos/go-gost/gost/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)
-    
-    # Get the correct download URL
-    GOST_URL=$(curl -s https://api.github.com/repos/go-gost/gost/releases/latest | grep "browser_download_url" | grep "linux-amd64" | cut -d '"' -f 4)
-    
-    if [[ -z "$GOST_URL" ]]; then
-        log_msg "❌ Failed to find a valid download link for GOST" "$RED"
-        exit 1
-    fi
-    
-    # Download and install
-    wget -O /usr/local/bin/gost "$GOST_URL"
+    wget -O gost.tar.gz "https://github.com/go-gost/gost/releases/download/v3.0.0-nightly.20250207/gost_3.0.0-nightly.20250207_linux_amd64.tar.gz"
+    tar -xzf gost.tar.gz
+    mv gost /usr/local/bin/
     chmod +x /usr/local/bin/gost
-    log_msg "✅ GOST $GOST_VERSION installed successfully!" "$GREEN"
+    rm gost.tar.gz
+    gost -V  # Verify installation
+
 
     
     log_msg "🔹 Generating WireGuard keys..."
