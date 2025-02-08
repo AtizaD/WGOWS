@@ -142,8 +142,10 @@ install() {
     apt update && apt install -y wireguard qrencode wget curl ufw | tee -a $LOG_FILE
 
     log_msg "🔹 Installing gost WebSocket tunnel..."
-    wget -O gost.tar.gz https://github.com/ginuerzh/gost/releases/latest/download/gost-linux-amd64.tar.gz
-    tar -xzf gost.tar.gz gost -C /usr/local/bin/
+    GOST_VERSION="2.11.5"  # Use a specific stable version
+    wget -O gost.tar.gz "https://github.com/go-gost/gost/releases/download/v${GOST_VERSION}/gost_${GOST_VERSION}_linux_amd64.tar.gz"
+    tar -xzf gost.tar.gz gost
+    mv gost /usr/local/bin/
     chmod +x $GOST_BIN
     rm gost.tar.gz
 
