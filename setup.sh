@@ -107,15 +107,15 @@ install_gost() {
     if [[ -f "$GOST_PATH" ]]; then
         log "Gost already installed, checking version..."
         return 0
-    }
-    
+    fi
+
     local gost_url="https://github.com/go-gost/gost/releases/download/${GOST_VERSION}/gost_${GOST_VERSION}_linux_amd64.tar.gz"
     wget -O /tmp/gost.tar.gz "$gost_url"
     tar -xzf /tmp/gost.tar.gz -C /tmp
     mv /tmp/gost "$GOST_PATH"
     chmod +x "$GOST_PATH"
     rm /tmp/gost.tar.gz
-    
+
     # Create systemd service for gost
     cat > /etc/systemd/system/gost.service <<EOF
 [Unit]
@@ -136,7 +136,9 @@ EOF
 
     systemctl daemon-reload
     systemctl enable gost
-}
+
+}  
+
 
 # Generate WireGuard keys
 generate_keys() {
