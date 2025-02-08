@@ -194,11 +194,14 @@ EOF
     log_msg "🔹 Enabling IP forwarding..."
     setup_ip_forwarding
 
-    log_msg "🔹 Configuring firewall..."
+    log_msg "🔹 Enabling firewall..."
+    ufw --force enable || { log_msg "❌ Failed to enable UFW. Check manually." "$RED"; exit 1; }
+    
+    log_msg "🔹 Configuring firewall rules..."
     ufw allow $WG_PORT/udp
     ufw allow OpenSSH
     ufw allow $WS_PORT/tcp
-    ufw --force enable
+    ufw reload
 
     log_msg "🔹 Starting WireGuard..."
     systemctl enable wg-quick@$WG_IFACE
